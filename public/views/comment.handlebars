@@ -1,0 +1,15 @@
+<ul>
+    {{#each article}}
+    <li>
+        <p>ID: {{this.id}}</p>
+        <p>User: {{this.user}}</p>
+        <p>Comment: {{this.comment}}</p>
+    </li>
+    {{/each}}
+</ul>
+
+<form action="/" method="PUT">
+    <textarea type="text" name="user"></textarea>
+    <textarea type="text" name="body"</textarea>
+        <button type="submit">Submit</button>
+</form>

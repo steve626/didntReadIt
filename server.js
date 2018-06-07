@@ -6,11 +6,16 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var axios = require('axios');
+var exphbs = require('express-handlebars');
 
 //require models
 var db = require('./models');
 
 var PORT = 3000;
+
+//handlebars templating
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 //Init Express
 var app = express();
@@ -31,7 +36,7 @@ db.on('error', function(error){
 });
 
 //scrape data from one site and place it into the mongoDB DB
-app.get('/scrape', function(req, res){
+axios.get('/scrape', function(req, res){
   //makes request from us news section of Wall Street Journal
   request('https://www.wsj.com/news/us').then(function(response){
   //loads cheerio and assigns it to '$'  
@@ -90,7 +95,7 @@ app.get('/articles/:id', function(req,res){
 app.post('/articles/:id', function(req, res){
   db.Comment.create(req.body)
   .then(function(dbComment){
-    return db.Article.fundOneAndUpdate({ _id: req.params.id}, {note: dbComment._id}, {new: true});
+    return db.Article.fundOneAndUpdate({ _id: req.params.id}, {note: dbComment._id}, {upsert: true}, {new: true});
   })
   .then(function(dbArticle){
     res.json(dbArticle);
