@@ -12,7 +12,7 @@ var ArticleSchema = new Schema({
         required: true,
     },
     summary: {
-        type:string,
+        type: String,
         required:true
     },
     comment: {

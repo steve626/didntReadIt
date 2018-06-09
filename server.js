@@ -7,6 +7,9 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var axios = require('axios');
 var exphbs = require('express-handlebars');
+var jquery = require('jquery');
+var morgan = require('morgan');
+
 
 //require models
 var db = require('./models');
@@ -14,8 +17,8 @@ var db = require('./models');
 var PORT = 3000;
 
 //handlebars templating
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
+// app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
+// app.set('view engine', 'handlebars');
 
 //Init Express
 var app = express();
@@ -28,22 +31,26 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.static('public'));
 
 //connect to the Mongo DB
-mongoose.connect('mongodb://localhost/didntPopulater');
+mongoose.connect('mongodb://localhost/Article');
 
-//log any errors
-db.on('error', function(error){
-  console.log('Database Error: ', error);
+var mdb = mongoose.connection;
+mdb.on('error', console.error.bind(console, 'connection error:'));
+mdb.once('open', function(){
+  console.log("we're connected to mongoDB");
 });
 
+process.on('uncaughtException', function (err){
+  console.log(err);
+});
 //scrape data from one site and place it into the mongoDB DB
 axios.get('/scrape', function(req, res){
   //makes request from us news section of Wall Street Journal
-  request('https://www.wsj.com/news/us').then(function(response){
+  request('https://www.nytimes.com').then(function(response){
   //loads cheerio and assigns it to '$'  
   var $ = cheerio.load(response.data);
 
   //grabs article data
-  $('header h2').each(function(i, element){
+  $('article h2').each(function(i, element){
     var result ={};
 
     result.title = $(this)
@@ -53,7 +60,7 @@ axios.get('/scrape', function(req, res){
       .children('a')
       .attr('href');
     result.summary = $(this)
-      .children('p')
+      .children('p summary')
       .text();
 
     db.Article.create(result)
@@ -106,8 +113,8 @@ app.post('/articles/:id', function(req, res){
 });
 
 
-app.listen(3000, function(){
-  console.log('app running on port 3000');
+app.listen(PORT, function(){
+  console.log('app running on: ' + PORT);
 });
 
 

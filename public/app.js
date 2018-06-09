@@ -3,7 +3,7 @@ $.getJSON('/articles', function(data){
     //loop for each article
     for (var i = 0; i < data.length; i++) {
         //displays information on page
-        $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].summary + "<br />" + data[i].link "<br />" + data[i].comment +"</p>");
+        $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].summary + "<br />" + data[i].link + "<br />" + data[i].comment +"</p>");
 
     }
 });
@@ -29,13 +29,13 @@ $(document).on("click", "p", function(){
         //Input for username
         $("#comments").append("<input id='username' name='user' >");
         //comment textarea
-        $("#comments").append("textarea id-'bodyinput' name='body'></textarea>");
+        $("#comments").append("textarea id='bodyinput' name='body'></textarea>");
         //submit button
-        $("#comments").append("button data-id='" data._id + "' id='saveComment'>Save Comment</button>");
+        $("#comments").append("button data-id='" + data._id + "' id='saveComment'>Save Comment</button>");
 
         if(data.comment) {
-            $("#titleinput").val(data.note.title).trim();
-            $("#bodyinput").val(data.note.body).trim();
+            $("#titleinput").val(data.comment.title).trim();
+            $("#bodyinput").val(data.comment.body).trim();
         }
     });
 });
