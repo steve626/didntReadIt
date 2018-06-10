@@ -4,7 +4,7 @@
         <p>Title: {{this.title}}</p>
         <p>Summary: {{this.summary}}</p>
         <p>Link: <a href="{{this.link}}"</a></p>
-        <p>Comments: {{this.comments}}</p>
+        {{#if}}<p>Comments: {{this.comments}}</p>{{/if}}
     </li>
     {{/each}}
 </ul>

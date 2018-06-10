@@ -5,6 +5,7 @@ var Schema = mongoose.Schema;
 var CommentSchema = new Schema({
 
     user: String,
+    
     comment: String
 });
 

@@ -7,8 +7,11 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var axios = require('axios');
 var exphbs = require('express-handlebars');
-var jquery = require('jquery');
 var morgan = require('morgan');
+
+
+//Init Express
+var app = express();
 
 
 //require models
@@ -17,11 +20,9 @@ var db = require('./models');
 var PORT = 3000;
 
 //handlebars templating
-// app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
-// app.set('view engine', 'handlebars');
+app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
-//Init Express
-var app = express();
 
 //morgan for logging requests
 app.use(logger('dev'));
@@ -31,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.static('public'));
 
 //connect to the Mongo DB
-mongoose.connect('mongodb://localhost/Article');
+mongoose.connect('mongodb://localhost/didntRead');
 
 var mdb = mongoose.connection;
 mdb.on('error', console.error.bind(console, 'connection error:'));
@@ -42,6 +43,8 @@ mdb.once('open', function(){
 process.on('uncaughtException', function (err){
   console.log(err);
 });
+
+
 //scrape data from one site and place it into the mongoDB DB
 axios.get('/scrape', function(req, res){
   //makes request from us news section of Wall Street Journal
