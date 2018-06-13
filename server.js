@@ -32,7 +32,12 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.static('public'));
 
 //connect to the Mongo DB
-mongoose.connect('mongodb://localhost/didntRead');
+//mongoose.connect('mongodb://localhost/didntread2');
+
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/didntScrape";
+
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
 
 var mdb = mongoose.connection;
 mdb.on('error', console.error.bind(console, 'connection error:'));
@@ -46,9 +51,9 @@ process.on('uncaughtException', function (err){
 
 
 //scrape data from one site and place it into the mongoDB DB
-axios.get('/scrape', function(req, res){
+app.get('/scrape', function(req, res){
   //makes request from us news section of Wall Street Journal
-  request('https://www.nytimes.com').then(function(response){
+  axios.get('https://www.nytimes.com').then(function(response){
   //loads cheerio and assigns it to '$'  
   var $ = cheerio.load(response.data);
 
@@ -57,13 +62,14 @@ axios.get('/scrape', function(req, res){
     var result ={};
 
     result.title = $(this)
-      .children('a')
+      .children('h2')
       .text();
     result.link = $(this)
+      .children('h2')
       .children('a')
       .attr('href');
     result.summary = $(this)
-      .children('p summary')
+      .children('.summary')
       .text();
 
     db.Article.create(result)
